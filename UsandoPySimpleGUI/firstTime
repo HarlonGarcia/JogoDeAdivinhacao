@@ -1,0 +1,57 @@
+import random
+import PySimpleGUI as pysg
+from PySimpleGUI.PySimpleGUI import WIN_CLOSED, WINDOW_CLOSED, Window
+
+# Criar layout, criar janela, ler a janela
+
+class RandomGame:
+    def __init__(self):
+        self.randomValue = 0
+        self.minValue = 1
+        self.maxValue = 100
+        self.tryAgain = True
+
+    def Start(self):
+        layout = [
+            [pysg.Text('Faça seu palpite', size = (30,0))],
+            [pysg.Input(size = (30,0), key ='Palpite')],
+            [pysg.Button('Enviar')],
+            [pysg.Output(size = (30,10))]
+        ]
+
+        self.window = pysg.Window('Jogo da Adivinhação', layout = layout)
+        self.GeneratingRandomNumber()
+
+        try:
+            DoThis = True
+            while DoThis:
+                # Reading window
+                self.events, self.values = self.window.Read()
+
+                if self.events == 'Enviar':
+                    self.guessValue = self.values['Palpite']
+
+                    while self.tryAgain == True:
+                        if int(self.guessValue) > self.randomValue:
+                            print('Chute um valor mais baixo!')
+                            break
+                        elif int(self.guessValue) < self.randomValue:
+                            print('Chute um valor mais alto!')
+                            break
+                        else:
+                            self.tryAgain = False
+                            print('PARABÉNS VOCÊ ACERTOU!!')
+
+                if self.events in (None, 'Cancel'):
+                    self.window.close()
+                    DoThis = False
+
+        except:
+            print('Digite apenas números!')
+            self.Start()
+
+    def GeneratingRandomNumber(self):
+        self.randomValue = random.randint(self.minValue, self.maxValue)
+
+game = RandomGame()
+game.Start()
